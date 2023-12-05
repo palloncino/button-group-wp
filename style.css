@@ -1,22 +1,17 @@
 .side-button-outer {
-  cursor: pointer;
+  cursor: pointer; 
+  box-sizing: border-box;
 }
 .side-button-inner {
+  box-sizing: border-box;
   background: #F7F7F7;
   border-radius: .4rem;
-  padding: .8rem 1.2rem; 
+  padding: .4rem .6rem; 
   display: flex;
   justify-content: flex-start;
   align-items: center;
   border: 2px solid #e9e9e9;
 }
-
-.side-button-inner:hover {
-  background: #e9e9e9;
-  border: 2px solid #e9e9e9;
-  
-}
-
 .side-button-icon {
   display: flex;
   justify-content: center;
@@ -27,32 +22,27 @@
   opacity: 0;
   transition: all 0.2s ease;
   transition-delay: .1s;
-  transform: rotate(45deg);
+  transform: rotate(90deg) scale(1.1) translateY(15%);
 }
-
-.side-button-outer:hover .side-button-icon {
-  flex: 1;
-  opacity: 1;
-  width: 100%;
-  height: 100%;
-}
-
 .side-button-text {
-  flex: 3;
+  flex: 4;
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
-
 .side-button-text-icon-container {
   height: 100%;
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   transition-delay: .1s;
 }
-
+.side-button-text-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .side-button-outer:hover .side-button-text-icon-container {
   display: flex;
   justify-content: center;
@@ -63,51 +53,38 @@
   opacity: 0;
   transition: all 0.1s ease;
 }
-
 .side-button-text-text-container {
+	line-height: 1.2rem;
+  transition: .2s;
   flex: 3;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  margin-left: .4rem;
+  font-weight: 500;
+  padding: .2rem .4rem;
 }
-
-.side-button-text-text-first {
-}
-
-.side-button-text-text-second {
-}
-
-.clickIn {
-  animation: clickIn 1s;
-  animation-delay: .2s;
-  animation-fill-mode: forwards;
-}
-
 .clickOut {
   animation: clickOut .2s;
   animation-delay: 0s;
   animation-fill-mode: forwards;
 }
-
-@keyframes clickIn {
-  0% {
-    transform: rotate(0deg);
-  }
-  20% {
-    transform: rotate(45deg);
-  }
-  100% {
-    transform: rotate(45deg) scale(1);
-  }
+.side-button-inner:hover { 
+  border: 2px solid #e9e9e9; 
 }
-
+.side-button-outer:hover .side-button-icon {
+  flex: 1;
+  opacity: 1;
+  width: 100%;
+  height: 100%;
+}
+.side-button-outer:hover .side-button-text-text-container {
+  transition: .2s;
+  box-sizing: border-box;
+  background: #00000010;
+  border-radius: .4rem;
+}
 @keyframes clickOut {
-  0% {
-    transform: rotate(45deg);
-  }
-  100% {
-    transform: rotate(0deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-45deg); }
 }

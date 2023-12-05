@@ -13,12 +13,10 @@
           var cursorIcon = buttonOuter.querySelector(".animate-svg");
 
           buttonOuter.addEventListener("mouseenter", function () {
-            cursorIcon.classList.add("clickIn");
             cursorIcon.classList.remove("clickOut");
           });
 
           buttonOuter.addEventListener("mouseleave", function () {
-            cursorIcon.classList.remove("clickIn");
             cursorIcon.classList.add("clickOut");
           });
         });
