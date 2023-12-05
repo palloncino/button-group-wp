@@ -1,0 +1,98 @@
+.side-button-outer {
+  cursor: pointer;
+}
+.side-button-inner {
+  background: #ff000030;
+  padding: .8rem 1.2rem; 
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.side-button-icon {
+  background: #cf0f0030;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transition: all 0.2s ease;
+  transition-delay: .1s;
+}
+
+.side-button-outer:hover .side-button-icon {
+  flex: 1;
+  opacity: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.side-button-outer:hover #cursorIcon {
+  background: red;
+  transform-origin: center;
+  animation: clickBounce;
+  animation-delay: .2s;
+}
+
+.side-button-text {
+  flex: 3;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.side-button-text-icon-container {
+  background: #00ff0030;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transition-delay: .1s;
+}
+
+.side-button-outer:hover .side-button-text-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transition: all 0.1s ease;
+}
+
+.side-button-text-text-container {
+  background: #0000ff30;
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  font-size: 1.2rem;
+}
+
+.side-button-text-text-first {
+  
+}
+
+.side-button-text-text-second {
+  padding-left: .4rem;
+}
+
+@keyframes clickBounce {
+  0% {
+    transform: rotate(0deg);
+    background: green;
+  }
+  33% {
+    transform: rotate(45deg);
+    background: red;
+  }
+  100% {
+    transform: rotate(0deg);
+    background: green;
+  }
+}
