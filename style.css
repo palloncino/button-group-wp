@@ -1,3 +1,11 @@
+/* - - - - - - - - - - */
+/* Logo                */
+/* - - - - - - - - - - */
+.ast-site-identity {padding: .8rem 0 .4rem 0!important;}
+
+/* - - - - - - - - - - */
+/* Sticky_Content_001  */
+/* - - - - - - - - - - */
 .side-button-outer {
   cursor: pointer; 
   box-sizing: border-box;
@@ -38,20 +46,20 @@
   align-items: center;
   transition-delay: .1s;
 }
-.side-button-text-icon-container {
+.side-button-text-icon-content {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .side-button-outer:hover .side-button-text-icon-container {
-  display: flex;
+  /* display: flex;
   justify-content: center;
   align-items: center;
   flex: 0;
   width: 0;
   height: 0;
   opacity: 0;
-  transition: all 0.1s ease;
+  transition: all 0.1s ease; */
 }
 .side-button-text-text-container {
 	line-height: 1.2rem;
@@ -81,7 +89,7 @@
 .side-button-outer:hover .side-button-text-text-container {
   transition: .2s;
   box-sizing: border-box;
-  background: #00000010;
+  text-decoration: underline;
   border-radius: .4rem;
 }
 @keyframes clickOut {
