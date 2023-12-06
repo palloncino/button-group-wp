@@ -1,0 +1,53 @@
+.postit-vacancies-container {
+  background: #f7f7f7;
+  border-radius: 0.4rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+.postit-vacancies-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+.postit-vacancies-header-title {
+  font-weight: 500;
+  font-size: 1.4rem;
+}
+.postit-vacancies-header-subtitle {
+}
+.postit-vacancies-central {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.postit-vacancies-central-value {
+  font-weight: 500;
+  font-size: 4rem;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.postit-vacancies-footer {
+  width: 100%;
+}
+.postit-vacancies-footer-button {
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+  background: #e8e8e8;
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #e8e8e8;
+  font-weight: 500;
+}
