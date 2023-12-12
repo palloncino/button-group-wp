@@ -1,5 +1,6 @@
+/* Postit */
 .postit-vacancies-container {
-  background: #f7f7f7;
+  background: #fff;
   border-radius: 0.4rem;
   padding: 1rem;
   display: flex;
@@ -7,7 +8,9 @@
   align-items: center;
   justify-content: flex-start;
   gap: 1rem;
+  border: 2px solid #e9e9e9;
 }
+
 .postit-vacancies-header {
   display: flex;
   flex-direction: column;
@@ -15,18 +18,22 @@
   justify-content: flex-start;
   gap: 1rem;
 }
+
 .postit-vacancies-header-title {
   font-weight: 500;
   font-size: 1.4rem;
 }
-.postit-vacancies-header-subtitle {
-}
+
+.postit-vacancies-header-subtitle {}
+
 .postit-vacancies-central {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 75px;
 }
+
 .postit-vacancies-central-value {
   font-weight: 500;
   font-size: 4rem;
@@ -35,19 +42,96 @@
   justify-content: center;
   align-items: center;
 }
+
 .postit-vacancies-footer {
   width: 100%;
 }
+
 .postit-vacancies-footer-button {
   width: 100%;
   cursor: pointer;
   box-sizing: border-box;
-  background: #e8e8e8;
+  padding: 1em;
+  background: #1E3050;
+  color: #fff;
+  border-radius: .4rem;
+}
+
+/* News Postit */
+
+.news-postit-container * {
+  transition: .2s;
+}
+
+.news-postit-container {
+  background: #fff;
   border-radius: 0.4rem;
-  padding: 0.4rem 0.6rem;
+  padding: 1rem;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  border: 2px solid #e8e8e8;
+  justify-content: flex-start;
+  gap: 1rem;
+  border: 2px solid #e9e9e9;
+}
+
+.news-postit-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.news-postit-header-title {
   font-weight: 500;
+  font-size: 1.4rem;
+}
+
+.news-postit-highlighted-item {
+  cursor: pointer;
+  background: #fff;
+}
+
+.news-postit-highlighted-item:hover .news-postit-highlighted-item-title {
+  text-decoration: underline;
+}
+
+.news-postit-highlighted-item:hover .news-postit-highlighted-item {
+  text-decoration: underline;
+}
+
+.news-postit-highlighted-item:hover .news-postit-highlighted-item-desc {
+  text-decoration: underline;
+}
+
+.news-postit-highlighted-item {
+
+}
+
+.news-postit-highlighted-item:not(:last-child) {
+  margin-bottom: 1rem;
+}
+
+.news-postit-footer {
+  width: 100%;
+}
+
+.news-postit-footer button {
+  width: 100%;
+  padding: 1em;
+  background: #1E3050;
+  color: #fff;
+  border-radius: .4rem;
+}
+
+.news-postit-highlighted-item-title {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #1E3050;
+}
+
+.news-postit-highlighted-item-desc {
+  padding: .4rem;
 }

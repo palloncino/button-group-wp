@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+window.addEventListener("DOMContentLoaded", function () {
   var isDesktop = window.innerWidth >= 1024;
 
   function updateStickyContent() {

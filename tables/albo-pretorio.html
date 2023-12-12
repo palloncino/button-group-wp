@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Your Table</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css"
+    />
+    <style>
+      /* Custom styles for alignment and input heights */
+      .dataTables_filter,
+      .dataTables_length,
+      #typeFilter,
+      .dataTables_filter input,
+      #typeFilter,
+      .dataTables_length select {
+        display: inline-block;
+        vertical-align: top;
+        margin-right: 10px;
+        height: 32px; /* Adjust height as needed */
+      }
+      .dataTables_wrapper .dataTables_filter {
+        float: none;
+      }
+      /* Custom width for the 'Oggetto' column */
+      #myTable th:nth-child(3),
+      #myTable td:nth-child(3) {
+        width: 50%;
+      }
+      #myTable {
+        margin-top: 1rem;
+      }
+    </style>
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://code.jquery.com/jquery-3.5.1.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"
+    ></script>
+  </head>
+  <body>
+    <!-- Dropdown for filtering -->
+    <select id="typeFilter">
+      <option value="all">All Types</option>
+      <option value="Decreti del Presidente">Decreti del Presidente</option>
+      <option value="Another Type">Another Type</option>
+      <!-- Add more types as options here -->
+    </select>
+
+    <!-- Table -->
+    <table id="myTable" class="display">
+      <thead>
+        <tr>
+          <th>N° Reg.</th>
+          <th>Tipo di provvedimento</th>
+          <th>Oggetto</th>
+          <th>Inizio pubblicazione</th>
+          <th>Fine pubblicazione</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>156/2023</td>
+          <td>Decreti del Presidente n.10 del 05/12/2023</td>
+          <td>
+            Lavori di ampliamento della casa di riposo e completamento edificio
+            magazzino – p.ed. 1316 CC – Roncegno Terme. Richiesta proroga
+            termini rendicontazione contributo.
+          </td>
+          <td>06/12/2023</td>
+          <td>16/12/2023</td>
+          <td>
+            <a
+              href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+              target="_blank"
+              >PDF</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td>155/2023</td>
+          <td>Decreti del Presidente n.9 del 05/12/2023</td>
+          <td>
+            Richiesta di deroga al punto 2. delle “Direttive Triennali 2021 –
+            2023 alle Aziende Pubbliche di Servizi alla Persona (APSP) che
+            gestiscono RSA” approvate con deliberazione della Giunta Provinciale
+            di Trento n. 2187 del 22.12.2020.
+          </td>
+          <td>06/12/2023</td>
+          <td>16/12/2023</td>
+          <td>
+            <a
+              href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+              target="_blank"
+              >PDF</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td>154/2023</td>
+          <td>Delibere consiglio amministrazione n.29 del 22/11/2023</td>
+          <td>
+            Lavori di ampliamento della casa di riposo e completamento edificio
+            magazzino - p.ed. 1316 CC - Roncegno Terme. Approvazione
+            "Certificato di ultimazione Lavori" e "Certificato di Regolare
+            esecuzione lavori"
+          </td>
+          <td>01/12/2023</td>
+          <td>11/12/2023</td>
+          <td>
+            <a
+              href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+              target="_blank"
+              >PDF</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td>153/2023</td>
+          <td>Concorsi e Selezioni</td>
+          <td>
+            APSP FOLGARIA - Bando di concorso pubblico per esami per la
+            copertura di n.2 posti a tempo pieno e indeterminato di Operatore
+            socio sanitario
+          </td>
+          <td>30/11/2023</td>
+          <td>12/01/2024</td>
+          <td>
+            <a
+              href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+              target="_blank"
+              >PDF</a
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <script>
+      $(document).ready(function () {
+        var table = $("#myTable").DataTable({
+          initComplete: function (settings, json) {
+            // Move the typeFilter dropdown into DataTables layout
+            $("#typeFilter").appendTo(".dataTables_length");
+
+            // Separate label and select into individual divs
+            var lengthSelect = $(
+              '.dataTables_length select[name="myTable_length"]'
+            );
+            var lengthLabel = $(".dataTables_length label");
+
+            // Wrap the select element in a new div
+            lengthSelect.wrap('<div class="length-select-container"></div>');
+
+            // Move the label text into a new div and insert before the select container
+            lengthLabel
+              .contents()
+              .filter(function () {
+                return this.nodeType === 3; // Node.TEXT_NODE
+              })
+              .wrap('<div class="length-label-container"></div>')
+              .end()
+              .end();
+
+            // Remove the original label element
+            lengthLabel.remove();
+          },
+        });
+
+        $("#typeFilter").on("change", function () {
+          var selectedType = this.value;
+          if (selectedType === "all") {
+            table.column(1).search("").draw();
+          } else {
+            table.column(1).search(selectedType).draw();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
