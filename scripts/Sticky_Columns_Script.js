@@ -12,36 +12,40 @@ window.addEventListener("DOMContentLoaded", function () {
       var ColumnRight = document.querySelector("#Sticky_Postit_Container");
 
       var CentralSectionHeight = CentralSection.scrollHeight;
-      var ColumnLeftHeight = ColumnLeft.offsetHeight;
-      var ColumnRightHeight = ColumnRight.offsetHeight;
+      var ColumnLeftHeight = ColumnLeft && ColumnLeft.offsetHeight;
+      var ColumnRightHeight = ColumnRight && ColumnRight.offsetHeight;
 
       var stickyStartPoint = headerHeight;
 
-      var endScrollColumnLeft =
-        headerHeight + CentralSectionHeight - ColumnLeftHeight - 20;
-      var endScrollColumnRight =
-        headerHeight + CentralSectionHeight - ColumnRightHeight - 20;
+      if (ColumnLeft) {
+        var endScrollColumnLeft = headerHeight + CentralSectionHeight - ColumnLeftHeight - 20;
 
-      if (window.scrollY > endScrollColumnLeft) {
-        ColumnLeft.style.position = "relative";
-        ColumnLeft.style.top = `${endScrollColumnLeft - stickyStartPoint}px`;
-      } else if (window.scrollY > stickyStartPoint) {
-        ColumnLeft.style.position = "relative";
-        ColumnLeft.style.top = `${window.scrollY - stickyStartPoint}px`;
-      } else {
-        ColumnLeft.style.position = "sticky";
-        ColumnLeft.style.top = `${headerHeight}px`;
+        if (window.scrollY > endScrollColumnLeft) {
+          ColumnLeft.style.position = "relative";
+          ColumnLeft.style.top = `${endScrollColumnLeft - stickyStartPoint}px`;
+        } else if (window.scrollY > stickyStartPoint) {
+          ColumnLeft.style.position = "relative";
+          ColumnLeft.style.top = `${window.scrollY - stickyStartPoint}px`;
+        } else {
+          ColumnLeft.style.position = "sticky";
+          ColumnLeft.style.top = `${headerHeight}px`;
+        }
       }
 
-      if (window.scrollY > endScrollColumnRight) {
-        ColumnRight.style.position = "relative";
-        ColumnRight.style.top = `${endScrollColumnRight - stickyStartPoint}px`;
-      } else if (window.scrollY > stickyStartPoint) {
-        ColumnRight.style.position = "relative";
-        ColumnRight.style.top = `${window.scrollY - stickyStartPoint}px`;
-      } else {
-        ColumnRight.style.position = "sticky";
-        ColumnRight.style.top = `${headerHeight}px`;
+      if (ColumnRight) {
+        var endScrollColumnRight = headerHeight + CentralSectionHeight - ColumnRightHeight - 20;
+        if (window.scrollY > endScrollColumnRight) {
+          ColumnRight.style.position = "relative";
+          ColumnRight.style.top = `${
+            endScrollColumnRight - stickyStartPoint
+          }px`;
+        } else if (window.scrollY > stickyStartPoint) {
+          ColumnRight.style.position = "relative";
+          ColumnRight.style.top = `${window.scrollY - stickyStartPoint}px`;
+        } else {
+          ColumnRight.style.position = "sticky";
+          ColumnRight.style.top = `${headerHeight}px`;
+        }
       }
     });
   }
