@@ -13,7 +13,10 @@ background: #091602!important;
 .ast-site-identity {
 padding: .8rem 0 .4rem 0!important;
 }
-
+/* - - - - - - - - - - */
+/* WP innate Header     
+/* - - - - - - - - - - */
+header.entry-header { display: none!important; }
 /* - - - - - - - - - - */
 /* Hero Header         */
 /* - - - - - - - - - - */
@@ -42,7 +45,8 @@ margin: 0!important;
 padding: .2rem .8rem!important;
 width: fit-content!important;
 text-shadow: 2px 2px 1px black!important;
-border-radius: .4rem!important;
+border-bottom-left-radius: .4rem!important;
+border-bottom-right-radius: .4rem!important;
 }
 .sub-title {
 border-top-left-radius: 0rem;
