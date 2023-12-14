@@ -1,0 +1,3 @@
+- create posts instead of hardcoding table s rows
+- upgrade page content design (full width)
+- amministrazione transparente (all buttons layers)
