@@ -1,0 +1,5 @@
+canvas {
+  width: 100%; /* Use 100% to make it responsive */
+  height: 100vh; /* Full viewport height */
+  display: block; /* Removes default canvas margin */
+}
