@@ -1,25 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
-  let scrollPosition = 0;
-
-  const MAX_SCROLL_POSITION = 1000; // Define the maximum scroll value
-
-  // Set the canvas size to match CSS dimensions
+  let scrollPosition = 1;
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
 
-  drawAtom(canvas.width * 0.1, canvas.height / 2); // Left atom
-  drawAtom(canvas.width * 0.9, canvas.height / 2); // Right atom
+  let centerX = canvas.width / 2; // Center X position
+  let atom1InitialX = canvas.width * 0.1; // Starting X for atom1 aligned with the initial drawing position
+  let atom2InitialX = canvas.width * 0.9; // Starting X for atom2 aligned with the initial drawing position
+  const MAX_SCROLL_POSITION = 1000; // Define the maximum scroll value
+  const maxScrollPhase1 = 300;
 
-  // Handle custom scroll
+  drawAtom(atom1InitialX, canvas.height / 2); // Left atom
+  drawAtom(atom2InitialX, canvas.height / 2); // Right atom
+
   window.addEventListener("wheel", (e) => {
-    e.preventDefault(); // Prevent the default scroll behavior
+    e.preventDefault();
     scrollPosition += e.deltaY;
-    scrollPosition = Math.min(Math.max(scrollPosition, 0), MAX_SCROLL_POSITION);
+    scrollPosition = Math.max(0, Math.min(scrollPosition, MAX_SCROLL_POSITION));
     updateAnimation(scrollPosition);
-    console.log(scrollPosition);
-  });
+  }, { passive: false });
 
   function updateAnimation(scrollPos) {
     const scrollPercent = (scrollPos / MAX_SCROLL_POSITION) * 100;
@@ -42,7 +42,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function phase1Animation(scrollPos) {
     console.log("phase1Animation", { scrollPos });
-  }
+    let progress = scrollPos / maxScrollPhase1;
+    progress = Math.min(progress, 1); // Cap progress to 1
+
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate new positions based on scroll progress
+    // Atom 1 moves from left to center
+    let atom1NewX = atom1InitialX + (centerX - atom1InitialX) * progress;
+    // Atom 2 moves from right to center
+    let atom2NewX = atom2InitialX - (atom2InitialX - centerX) * progress;
+
+    // Redraw the atoms at the new positions
+    drawAtom(atom1NewX, canvas.height / 2);
+    drawAtom(atom2NewX, canvas.height / 2);
+}
+
 
   function phase2Animation(scrollPos) {
     console.log("phase2Animation", { scrollPos });
