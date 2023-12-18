@@ -8,9 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
   canvas.height = canvas.offsetHeight;
 
   let centerX = canvas.width / 2; // Center X position
+  let centerY = canvas.height / 2; // Center X position
 
   const MAX_SCROLL_POSITION = 1000; // Define the maximum scroll value
-  const maxScrollPhase1 = 333;
+  const maxScrollPhase1 = 300;
   const maxScrollPhase2 = 666;
   const maxScrollPhase3 = 999;
 
@@ -25,7 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
         controlX: centerX * 0.5,
         controlY: canvas.height * 0.3,
       },
-      phase2: { endX: 200, endY: 100 }, // Example values
+      phase2: {
+        startX: centerX,
+        startY: centerY,
+        endX: 500,
+        endY: 500,
+        controlX: centerX - 100, // Adjust for desired curvature
+        controlY: centerY - 100,
+      }, // Example values
       // Add phase3 values
     },
     atom2: {
@@ -37,27 +45,62 @@ document.addEventListener("DOMContentLoaded", () => {
         controlX: centerX * 1.5,
         controlY: canvas.height * 0.7, // Adjust this value to move the curve lower
       },
-      phase2: { endX: 400, endY: 100 }, // Example values
+      phase2: {
+        startX: centerX,
+        startY: centerY,
+        endX: Math.floor(Math.random() * 500),
+        endY: Math.floor(Math.random() * 500),
+        controlX: centerX + 100,
+        controlY: centerY - 100,
+      }, // Example values
       // Add phase3 values
     },
     atom3: {
       phase1: {},
-      phase2: { endX: 400, endY: 100 }, // Example values
+      phase2: {
+        startX: centerX,
+        startY: centerY,
+        endX: Math.floor(Math.random() * 500),
+        endY: Math.floor(Math.random() * 500),
+        controlX: centerX + 110,
+        controlY: centerY - 110,
+      },
       // Add phase3 values
     },
     atom4: {
       phase1: {},
-      phase2: { endX: 400, endY: 100 }, // Example values
+      phase2: {
+        startX: centerX,
+        startY: centerY,
+        endX: Math.floor(Math.random() * 500),
+        endY: Math.floor(Math.random() * 500),
+        controlX: centerX + 120,
+        controlY: centerY - 120,
+      },
       // Add phase3 values
     },
     atom5: {
       phase1: {},
-      phase2: { endX: 400, endY: 100 }, // Example values
+      phase2: {
+        startX: centerX,
+        startY: centerY,
+        endX: Math.floor(Math.random() * 500),
+        endY: Math.floor(Math.random() * 500),
+        controlX: centerX + 130,
+        controlY: centerY - 130,
+      },
       // Add phase3 values
     },
     atom6: {
       phase1: {},
-      phase2: { endX: 400, endY: 100 }, // Example values
+      phase2: {
+        startX: centerX,
+        startY: centerY,
+        endX: Math.floor(Math.random() * 500),
+        endY: Math.floor(Math.random() * 500),
+        controlX: centerX + 140,
+        controlY: centerY - 140,
+      },
       // Add phase3 values
     },
   };
