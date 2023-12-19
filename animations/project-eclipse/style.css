@@ -1,3 +1,8 @@
+body{
+  margin:0;
+  background: #222;
+}
+
 canvas {
   width: 100%; /* Use 100% to make it responsive */
   height: 100vh; /* Full viewport height */
