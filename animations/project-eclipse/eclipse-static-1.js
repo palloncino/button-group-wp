@@ -1,13 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
   const MAX_PHASE = 3; // Maximum phase
-  const ANIMATION_COOLDOWN_MS = 2000; // 2 seconds cooldown
+  const ANIMATION_COOLDOWN_MS = 1500;
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
   let centerX = canvas.width / 2; // Center X position
   let centerY = canvas.height / 2; // Center Y position
-  let animationPhase = 1; // Starting animation phase
+  let animationPhase = 0; // Starting animation phase
   let lastAnimationTime = 0;
   let animationProgress = 0; // New variable to track animation progress
   const ANIMATION_DURATION = 1500; // 1.5 seconds in milliseconds
@@ -177,6 +177,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return { x, y };
   }
 
+  function easeOutQuadratic(t) {
+    return t * (2 - t);
+  }
+
   function drawAtom(atom) {
     ctx.beginPath();
     ctx.arc(atom.x, atom.y, 20, 0, 2 * Math.PI); // Adjust the size as needed
@@ -205,17 +209,18 @@ document.addEventListener("DOMContentLoaded", () => {
   function animatePhase() {
     const currentTime = Date.now();
     const elapsedTime = currentTime - lastAnimationTime;
-    animationProgress = elapsedTime / ANIMATION_DURATION;
+    let linearProgress = elapsedTime / ANIMATION_DURATION;
 
-    if (animationProgress >= 1) {
-      animationProgress = 1; // Cap the progress to 100%
-      lastAnimationTime = currentTime;
+    if (linearProgress >= 1) {
+        linearProgress = 1; // Cap the progress at 100%
+        lastAnimationTime = currentTime;
     } else {
-      requestAnimationFrame(animatePhase); // Continue animation
+        requestAnimationFrame(animatePhase); // Continue animation
     }
 
+    animationProgress = easeOutQuadratic(linearProgress); // Apply easing
     updateAnimation();
-  }
+}
 
   function phase0Animation() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
