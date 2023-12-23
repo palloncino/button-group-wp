@@ -15,6 +15,18 @@ const pointLight = new THREE.PointLight(0xffffff, 1);
 pointLight.position.set(5, 5, 5);
 scene.add(pointLight);
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+function onMouseMove(event) {
+  // Calculate mouse position in normalized device coordinates
+  // (-1 to +1) for both components
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+window.addEventListener('mousemove', onMouseMove, false);
+
 // Sphere Creation
 const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
 const sphereMaterials = [
@@ -121,19 +133,36 @@ renderer.domElement.addEventListener("click", () => {
 
 let frameCount = 0; // Initialize frameCount
 
-// Animation Loop
 function animate() {
   requestAnimationFrame(animate);
   frameCount++;
 
   let currentTime = Date.now();
+
+  // Update the raycaster with the current mouse position
+  raycaster.setFromCamera(mouse, camera);
+
+  // Calculate objects intersecting the picking ray
+  const intersects = raycaster.intersectObjects(spheres);
+
   spheres.forEach((sphere, index) => {
+    // Handle sphere movement based on phase
     if (phase === "floating") floatingPhase(sphere, index);
     else if (phase === "eclipse") eclipsePhase(sphere, initialPositions[index] || { x: 0, y: 0, z: 0 });
     else if (phase === "scatter") moveToTarget(sphere, targets[index], scatterStartTime, currentTime);
+
+    // Scale spheres on hover
+    if (intersects.length > 0 && intersects[0].object === sphere) {
+      // Scale up the hovered sphere
+      sphere.scale.lerp(new THREE.Vector3(1.2, 1.2, 1.2), 0.1);
+    } else {
+      // Scale down the non-hovered spheres
+      sphere.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+    }
   });
 
   renderer.render(scene, camera);
 }
+
 
 animate();
