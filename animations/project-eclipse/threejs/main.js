@@ -77,12 +77,12 @@ function eclipsePhase(sphere, initialPosition) {
 
 // Target positions for each sphere
 const targets = [
-  { x: -1, y: 2.5 }, // red
-  { x: 1, y: 2.5 }, // green
-  { x: 2, y: 1 }, // blue
-  { x: 1, y: -1 }, // yellow
-  { x: -1, y: -1 }, // aqua
-  { x: -2, y: 1 }, // pink
+  { x: -1, y: 2 }, // red
+  { x: 1, y: 2 }, // green
+  { x: 2, y: 0 }, // blue
+  { x: 1, y: -2 }, // yellow
+  { x: -1, y: -2 }, // aqua
+  { x: -2, y: 0 }, // pink
 ];
 
 function moveToTarget(sphere, target, startTime, currentTime) {
