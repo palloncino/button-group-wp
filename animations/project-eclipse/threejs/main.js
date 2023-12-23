@@ -18,6 +18,48 @@ scene.add(pointLight);
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
+// https://threejs.org/examples/fonts/helvetiker_regular.typeface.json
+const loader = new THREE.FontLoader();
+const radius = 1.5;
+const orbitRadius = 0.7;
+const textString = "Text"; // Replace with your desired text
+const characters = textString.split("");
+const totalAngle = Math.PI; // Use half a circle (180 degrees) or less for tighter grouping
+const angleStep = totalAngle / characters.length;
+
+loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", function (font) {
+  spheres.forEach((sphere, sphereIndex) => {
+    let angleOffset = -totalAngle / 2; // Start from one side of the semi-circle
+
+    characters.forEach((char, charIndex) => {
+      const textGeometry = new THREE.TextGeometry(char, {
+        font: font,
+        size: 0.2,
+        height: 0.05,
+      });
+
+      const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+      // Calculate angle for each character
+      const charAngle = angleOffset + charIndex * angleStep;
+
+      // Position each character in a circular path
+      textMesh.position.x = sphere.position.x + Math.cos(charAngle) * orbitRadius;
+      textMesh.position.y = sphere.position.y + Math.sin(charAngle) * orbitRadius;
+      textMesh.position.z = sphere.position.z;
+
+      // Rotate text to always face the camera
+      textMesh.lookAt(camera.position);
+
+      // Store initial angle, sphere index, and reference to the sphere for animation
+      textMesh.userData = { angle: charAngle, sphereIndex: sphereIndex, sphere: sphere };
+
+      scene.add(textMesh);
+    });
+  });
+});
+
 function onMouseMove(event) {
   // Calculate mouse position in normalized device coordinates
   // (-1 to +1) for both components
@@ -25,7 +67,7 @@ function onMouseMove(event) {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 }
 
-window.addEventListener('mousemove', onMouseMove, false);
+window.addEventListener("mousemove", onMouseMove, false);
 
 // Sphere Creation
 const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
@@ -161,8 +203,25 @@ function animate() {
     }
   });
 
+  scene.children.forEach((child) => {
+    if (child instanceof THREE.Mesh && child.userData.angle !== undefined) {
+      const sphere = child.userData.sphere;
+
+      // Update position to orbit around the sphere
+      child.userData.angle += 0.01; // Speed of rotation
+      child.position.x = sphere.position.x + Math.cos(child.userData.angle) * orbitRadius;
+      child.position.y = sphere.position.y + Math.sin(child.userData.angle) * orbitRadius;
+      child.position.z = sphere.position.z;
+
+      // Rotate text to always face the camera
+      child.lookAt(camera.position);
+
+      // Update visibility based on sphere's visibility
+      child.visible = sphere.visible;
+    }
+  });
+
   renderer.render(scene, camera);
 }
-
 
 animate();
