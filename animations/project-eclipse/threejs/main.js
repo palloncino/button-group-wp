@@ -4,6 +4,9 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+const movementDuration = 1; // Movement duration in seconds
+const frameRate = 60; // Assuming 60 frames per second
+// Animation variables
 
 camera.position.z = 5;
 
@@ -92,38 +95,36 @@ const targets = [
   { x: -2, y: 1 }, // pink
 ];
 
-// Function to move sphere towards a target
-function moveToTarget(sphere, target, velocity) {
-  const dx = target.x - sphere.position.x;
-  const dy = target.y - sphere.position.y;
+function moveToTarget(sphere, target, startTime, currentTime) {
+  const duration = movementDuration * 1000; // Convert to milliseconds
+  let timeElapsed = currentTime - startTime;
 
-  // Check if the sphere is close to the target
-  if (Math.abs(dx) > 0.01 || Math.abs(dy) > 0.01) {
-    sphere.position.x += Math.sign(dx) * Math.min(Math.abs(velocity.x), Math.abs(dx));
-    sphere.position.y += Math.sign(dy) * Math.min(Math.abs(velocity.y), Math.abs(dy));
-  } else {
-    // Sphere is close enough to the target
-    sphere.position.x = target.x;
-    sphere.position.y = target.y;
-  }
+  if (timeElapsed > duration) timeElapsed = duration; // Cap at max duration
+
+  // Calculate eased progress
+  let progress = easeOutCubic(timeElapsed / duration);
+
+  // Lerp position towards the target
+  sphere.position.x = THREE.MathUtils.lerp(sphere.position.x, target.x, progress);
+  sphere.position.y = THREE.MathUtils.lerp(sphere.position.y, target.y, progress);
 }
 
-// Click event listener
+let startTime;
+
 renderer.domElement.addEventListener("click", () => {
-  if (phase === "floating") {
-    phase = "eclipse";
-    t = 0; // Reset animation time
-  } else if (phase === "eclipse") {
-    phase = "scatter";
-    // Make additional spheres visible
-    sphere3.visible = true;
-    sphere4.visible = true;
-    sphere5.visible = true;
-    sphere6.visible = true;
-    // Reset positions for scatter
-    [sphere1, sphere2, sphere3, sphere4, sphere5, sphere6].forEach((sphere) => sphere.position.set(0, 0, 0));
-  }
-});
+    if (phase === "floating") {
+      phase = "eclipse";
+      t = 0; // Reset animation time
+    } else if (phase === "eclipse") {
+      phase = "scatter";
+      scatterStartTime = Date.now(); // Record the start time of the scatter phase
+      // Make additional spheres visible
+      sphere3.visible = true;
+      sphere4.visible = true;
+      sphere5.visible = true;
+      sphere6.visible = true;
+    }
+  });
 
 // Define bounds
 const bounds = {
@@ -155,6 +156,10 @@ function scatterPhase(sphere, velocity) {
   sphere.position.y = nextY;
 }
 
+function easeOutCubic(x) {
+  return 1 - Math.pow(1 - x, 3);
+}
+
 // Animation loop
 function animate() {
   requestAnimationFrame(animate);
@@ -174,9 +179,9 @@ function animate() {
       sphere.position.set(0, 0, 0);
     });
   } else if (phase === "scatter") {
-    // Move each sphere towards its target
+    let currentTime = Date.now();
     [sphere1, sphere2, sphere3, sphere4, sphere5, sphere6].forEach((sphere, index) => {
-      moveToTarget(sphere, targets[index], scatterVelocities[index]);
+      moveToTarget(sphere, targets[index], scatterStartTime, currentTime);
     });
   }
 
