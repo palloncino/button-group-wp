@@ -26,7 +26,7 @@ const sphereMaterials = [
   new THREE.MeshStandardMaterial({ color: 0xff00ff }), // pink
 ];
 
-const spheres = sphereMaterials.map(material => new THREE.Mesh(sphereGeometry, material));
+const spheres = sphereMaterials.map((material) => new THREE.Mesh(sphereGeometry, material));
 spheres.forEach((sphere, index) => {
   sphere.visible = index < 2; // Only the first two spheres are initially visible
   scene.add(sphere);
@@ -42,13 +42,12 @@ const initialPositions = [
   { x: 0, y: 0, z: 0 }, // pink
 ];
 
-
 spheres.forEach((sphere, index) => {
   sphere.position.set(initialPositions[index]?.x || 0, initialPositions[index]?.y || 0, 0);
 });
 
 // Animation Variables
-const movementDuration = 1; // seconds
+const movementDuration = 5; // seconds
 const frameRate = 60; // frames per second
 let animationTime = 0;
 let phase = "floating"; // "floating", "eclipse", "scatter"
@@ -59,18 +58,26 @@ function easeOutCubic(x) {
   return 1 - Math.pow(1 - x, 3);
 }
 
-// Phase Functions
-function floatingPhase(sphere) {
-  // Random floating movement
-  sphere.position.x += (Math.random() - 0.5) * 0.01;
-  sphere.position.y += (Math.random() - 0.5) * 0.01;
+function easeOutExpo(x) {
+  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+}
+
+// Ellipse Parameters
+const ellipseXRadius = 0.5; // Radius of ellipse along the x-axis
+const ellipseYRadius = 0.25; // Radius of ellipse along the y-axis
+const ellipseSpeed = 0.05; // Speed of movement along the ellipse
+
+function floatingPhase(sphere, index) {
+  let time = frameCount * ellipseSpeed;
+  sphere.position.x = initialPositions[index].x + ellipseXRadius * Math.cos(time);
+  sphere.position.y = initialPositions[index].y + ellipseYRadius * Math.sin(time);
 }
 
 function eclipsePhase(sphere, initialPosition) {
-  animationTime += 0.005;
+  animationTime += 0.002; // Slower increment
   if (animationTime > 1) animationTime = 1;
 
-  let progress = easeOutCubic(animationTime);
+  let progress = easeOutExpo(animationTime);
   sphere.position.x = THREE.MathUtils.lerp(initialPosition.x, 0, progress);
   sphere.position.y = THREE.MathUtils.lerp(initialPosition.y, 0, progress);
 }
@@ -86,11 +93,11 @@ const targets = [
 ];
 
 function moveToTarget(sphere, target, startTime, currentTime) {
-  const duration = movementDuration * 1000;
+  const duration = movementDuration * 1000; // Convert to milliseconds
   let timeElapsed = currentTime - startTime;
   if (timeElapsed > duration) timeElapsed = duration;
 
-  let progress = easeOutCubic(timeElapsed / duration);
+  let progress = easeOutExpo(timeElapsed / duration);
   sphere.position.x = THREE.MathUtils.lerp(sphere.position.x, target.x, progress);
   sphere.position.y = THREE.MathUtils.lerp(sphere.position.y, target.y, progress);
 }
@@ -100,20 +107,28 @@ renderer.domElement.addEventListener("click", () => {
   if (phase === "floating") {
     phase = "eclipse";
     animationTime = 0;
+
+    // Update initialPositions to current position
+    spheres.forEach((sphere, index) => {
+      initialPositions[index] = { x: sphere.position.x, y: sphere.position.y, z: sphere.position.z };
+    });
   } else if (phase === "eclipse") {
     phase = "scatter";
     scatterStartTime = Date.now();
-    spheres.forEach(sphere => sphere.visible = true);
+    spheres.forEach((sphere) => (sphere.visible = true));
   }
 });
+
+let frameCount = 0; // Initialize frameCount
 
 // Animation Loop
 function animate() {
   requestAnimationFrame(animate);
+  frameCount++;
 
   let currentTime = Date.now();
   spheres.forEach((sphere, index) => {
-    if (phase === "floating") floatingPhase(sphere);
+    if (phase === "floating") floatingPhase(sphere, index);
     else if (phase === "eclipse") eclipsePhase(sphere, initialPositions[index] || { x: 0, y: 0, z: 0 });
     else if (phase === "scatter") moveToTarget(sphere, targets[index], scatterStartTime, currentTime);
   });
