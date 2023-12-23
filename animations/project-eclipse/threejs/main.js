@@ -1,86 +1,76 @@
-// Basic Three.js setup
+// Scene Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-const movementDuration = 1; // Movement duration in seconds
-const frameRate = 60; // Assuming 60 frames per second
-// Animation variables
 
-camera.position.z = 5;
-
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // soft white light
+// Lighting
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
 const pointLight = new THREE.PointLight(0xffffff, 1);
 pointLight.position.set(5, 5, 5);
 scene.add(pointLight);
 
-// Sphere setup
+// Sphere Creation
 const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-const sphereMaterial1 = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-const sphereMaterial2 = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+const sphereMaterials = [
+  new THREE.MeshStandardMaterial({ color: 0xff0000 }), // red
+  new THREE.MeshStandardMaterial({ color: 0x00ff00 }), // green
+  new THREE.MeshStandardMaterial({ color: 0x0000ff }), // blue
+  new THREE.MeshStandardMaterial({ color: 0xffff00 }), // yellow
+  new THREE.MeshStandardMaterial({ color: 0x00ffff }), // aqua
+  new THREE.MeshStandardMaterial({ color: 0xff00ff }), // pink
+];
 
-// Create two spheres
-const sphere1 = new THREE.Mesh(sphereGeometry, sphereMaterial1);
-const sphere2 = new THREE.Mesh(sphereGeometry, sphereMaterial2);
+const spheres = sphereMaterials.map(material => new THREE.Mesh(sphereGeometry, material));
+spheres.forEach((sphere, index) => {
+  sphere.visible = index < 2; // Only the first two spheres are initially visible
+  scene.add(sphere);
+});
 
-// Create four additional spheres
-const sphere3 = new THREE.Mesh(sphereGeometry, new THREE.MeshStandardMaterial({ color: 0x0000ff }));
-const sphere4 = new THREE.Mesh(sphereGeometry, new THREE.MeshStandardMaterial({ color: 0xffff00 }));
-const sphere5 = new THREE.Mesh(sphereGeometry, new THREE.MeshStandardMaterial({ color: 0x00ffff }));
-const sphere6 = new THREE.Mesh(sphereGeometry, new THREE.MeshStandardMaterial({ color: 0xff00ff }));
+// Initial Positions
+const initialPositions = [
+  { x: -2, y: 2, z: 0 }, // red
+  { x: 2, y: -2, z: 0 }, // green
+  { x: 0, y: 0, z: 0 }, // blue
+  { x: 0, y: 0, z: 0 }, // yellow
+  { x: 0, y: 0, z: 0 }, // aqua
+  { x: 0, y: 0, z: 0 }, // pink
+];
 
-sphere3.visible = false;
-sphere4.visible = false;
-sphere5.visible = false;
-sphere6.visible = false;
 
-sphere1.position.set(-2, 2, 0);
-sphere2.position.set(2, -2, 0);
-sphere3.position.set(0, 0, 0);
-sphere4.position.set(0, 0, 0);
-sphere5.position.set(0, 0, 0);
-sphere6.position.set(0, 0, 0);
+spheres.forEach((sphere, index) => {
+  sphere.position.set(initialPositions[index]?.x || 0, initialPositions[index]?.y || 0, 0);
+});
 
-scene.add(sphere1);
-scene.add(sphere2);
-scene.add(sphere3);
-scene.add(sphere4);
-scene.add(sphere5);
-scene.add(sphere6);
-
-// Animation variables
-let t = 0;
+// Animation Variables
+const movementDuration = 1; // seconds
+const frameRate = 60; // frames per second
+let animationTime = 0;
 let phase = "floating"; // "floating", "eclipse", "scatter"
+let scatterStartTime;
 
-// Scatter phase velocities
-let scatterVelocities = [sphere1, sphere2, sphere3, sphere4, sphere5, sphere6].map(() => ({
-  x: (Math.random() - 0.5) * 0.1,
-  y: (Math.random() - 0.5) * 0.1,
-}));
-
-// Easing function
+// Easing Function
 function easeOutCubic(x) {
   return 1 - Math.pow(1 - x, 3);
 }
 
-// Floating phase
+// Phase Functions
 function floatingPhase(sphere) {
+  // Random floating movement
   sphere.position.x += (Math.random() - 0.5) * 0.01;
   sphere.position.y += (Math.random() - 0.5) * 0.01;
 }
 
-// Eclipse phase
 function eclipsePhase(sphere, initialPosition) {
-  t += 0.005; // Adjust speed
-  if (t > 1) t = 1;
+  animationTime += 0.005;
+  if (animationTime > 1) animationTime = 1;
 
-  // Calculate eased progress
-  let progress = easeOutCubic(t);
-
-  // Move spheres to center
+  let progress = easeOutCubic(animationTime);
   sphere.position.x = THREE.MathUtils.lerp(initialPosition.x, 0, progress);
   sphere.position.y = THREE.MathUtils.lerp(initialPosition.y, 0, progress);
 }
@@ -96,94 +86,37 @@ const targets = [
 ];
 
 function moveToTarget(sphere, target, startTime, currentTime) {
-  const duration = movementDuration * 1000; // Convert to milliseconds
+  const duration = movementDuration * 1000;
   let timeElapsed = currentTime - startTime;
+  if (timeElapsed > duration) timeElapsed = duration;
 
-  if (timeElapsed > duration) timeElapsed = duration; // Cap at max duration
-
-  // Calculate eased progress
   let progress = easeOutCubic(timeElapsed / duration);
-
-  // Lerp position towards the target
   sphere.position.x = THREE.MathUtils.lerp(sphere.position.x, target.x, progress);
   sphere.position.y = THREE.MathUtils.lerp(sphere.position.y, target.y, progress);
 }
 
-let startTime;
-
+// Event Listener for Phase Transition
 renderer.domElement.addEventListener("click", () => {
-    if (phase === "floating") {
-      phase = "eclipse";
-      t = 0; // Reset animation time
-    } else if (phase === "eclipse") {
-      phase = "scatter";
-      scatterStartTime = Date.now(); // Record the start time of the scatter phase
-      // Make additional spheres visible
-      sphere3.visible = true;
-      sphere4.visible = true;
-      sphere5.visible = true;
-      sphere6.visible = true;
-    }
-  });
-
-// Define bounds
-const bounds = {
-  minX: -2,
-  maxX: 2,
-  minY: -2,
-  maxY: 2,
-};
-
-// Scatter phase with bounds
-function scatterPhase(sphere, velocity) {
-  let nextX = sphere.position.x + velocity.x;
-  let nextY = sphere.position.y + velocity.y;
-
-  // Check horizontal bounds
-  if (nextX < bounds.minX || nextX > bounds.maxX) {
-    velocity.x = -velocity.x; // Reverse direction
-    nextX = sphere.position.x + velocity.x; // Recalculate next position
+  if (phase === "floating") {
+    phase = "eclipse";
+    animationTime = 0;
+  } else if (phase === "eclipse") {
+    phase = "scatter";
+    scatterStartTime = Date.now();
+    spheres.forEach(sphere => sphere.visible = true);
   }
+});
 
-  // Check vertical bounds
-  if (nextY < bounds.minY || nextY > bounds.maxY) {
-    velocity.y = -velocity.y; // Reverse direction
-    nextY = sphere.position.y + velocity.y; // Recalculate next position
-  }
-
-  // Update position
-  sphere.position.x = nextX;
-  sphere.position.y = nextY;
-}
-
-function easeOutCubic(x) {
-  return 1 - Math.pow(1 - x, 3);
-}
-
-// Animation loop
+// Animation Loop
 function animate() {
   requestAnimationFrame(animate);
 
-  if (phase === "floating") {
-    // Apply floating movement to all spheres
-    [sphere1, sphere2, sphere3, sphere4, sphere5, sphere6].forEach((sphere) => {
-      floatingPhase(sphere);
-    });
-  } else if (phase === "eclipse") {
-    // Only first two spheres move to form the eclipse
-    eclipsePhase(sphere1, new THREE.Vector3(-2, 2, 0));
-    eclipsePhase(sphere2, new THREE.Vector3(2, -2, 0));
-
-    // Additional spheres remain at the center
-    [sphere3, sphere4, sphere5, sphere6].forEach((sphere) => {
-      sphere.position.set(0, 0, 0);
-    });
-  } else if (phase === "scatter") {
-    let currentTime = Date.now();
-    [sphere1, sphere2, sphere3, sphere4, sphere5, sphere6].forEach((sphere, index) => {
-      moveToTarget(sphere, targets[index], scatterStartTime, currentTime);
-    });
-  }
+  let currentTime = Date.now();
+  spheres.forEach((sphere, index) => {
+    if (phase === "floating") floatingPhase(sphere);
+    else if (phase === "eclipse") eclipsePhase(sphere, initialPositions[index] || { x: 0, y: 0, z: 0 });
+    else if (phase === "scatter") moveToTarget(sphere, targets[index], scatterStartTime, currentTime);
+  });
 
   renderer.render(scene, camera);
 }
