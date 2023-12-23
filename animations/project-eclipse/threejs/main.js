@@ -14,7 +14,6 @@ const pointLight = new THREE.PointLight(0xffffff, 1);
 pointLight.position.set(5, 5, 5);
 scene.add(pointLight);
 
-
 // Sphere setup
 const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
 const sphereMaterial1 = new THREE.MeshStandardMaterial({ color: 0xff0000 });
@@ -83,6 +82,32 @@ function eclipsePhase(sphere, initialPosition) {
   sphere.position.y = THREE.MathUtils.lerp(initialPosition.y, 0, progress);
 }
 
+// Target positions for each sphere
+const targets = [
+  { x: -1, y: 2.5 }, // red
+  { x: 1, y: 2.5 }, // green
+  { x: 2, y: 1 }, // blue
+  { x: 1, y: -1 }, // yellow
+  { x: -1, y: -1 }, // aqua
+  { x: -2, y: 1 }, // pink
+];
+
+// Function to move sphere towards a target
+function moveToTarget(sphere, target, velocity) {
+  const dx = target.x - sphere.position.x;
+  const dy = target.y - sphere.position.y;
+
+  // Check if the sphere is close to the target
+  if (Math.abs(dx) > 0.01 || Math.abs(dy) > 0.01) {
+    sphere.position.x += Math.sign(dx) * Math.min(Math.abs(velocity.x), Math.abs(dx));
+    sphere.position.y += Math.sign(dy) * Math.min(Math.abs(velocity.y), Math.abs(dy));
+  } else {
+    // Sphere is close enough to the target
+    sphere.position.x = target.x;
+    sphere.position.y = target.y;
+  }
+}
+
 // Click event listener
 renderer.domElement.addEventListener("click", () => {
   if (phase === "floating") {
@@ -100,10 +125,34 @@ renderer.domElement.addEventListener("click", () => {
   }
 });
 
-// Scatter phase
+// Define bounds
+const bounds = {
+  minX: -2,
+  maxX: 2,
+  minY: -2,
+  maxY: 2,
+};
+
+// Scatter phase with bounds
 function scatterPhase(sphere, velocity) {
-  sphere.position.x += velocity.x;
-  sphere.position.y += velocity.y;
+  let nextX = sphere.position.x + velocity.x;
+  let nextY = sphere.position.y + velocity.y;
+
+  // Check horizontal bounds
+  if (nextX < bounds.minX || nextX > bounds.maxX) {
+    velocity.x = -velocity.x; // Reverse direction
+    nextX = sphere.position.x + velocity.x; // Recalculate next position
+  }
+
+  // Check vertical bounds
+  if (nextY < bounds.minY || nextY > bounds.maxY) {
+    velocity.y = -velocity.y; // Reverse direction
+    nextY = sphere.position.y + velocity.y; // Recalculate next position
+  }
+
+  // Update position
+  sphere.position.x = nextX;
+  sphere.position.y = nextY;
 }
 
 // Animation loop
@@ -125,9 +174,9 @@ function animate() {
       sphere.position.set(0, 0, 0);
     });
   } else if (phase === "scatter") {
-    // All spheres scatter
+    // Move each sphere towards its target
     [sphere1, sphere2, sphere3, sphere4, sphere5, sphere6].forEach((sphere, index) => {
-      scatterPhase(sphere, scatterVelocities[index]);
+      moveToTarget(sphere, targets[index], scatterVelocities[index]);
     });
   }
 
