@@ -5,6 +5,7 @@ camera.position.z = 5;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0xffffff, 1);
 document.body.appendChild(renderer.domElement);
 
 // Lighting
@@ -28,35 +29,31 @@ const totalAngle = Math.PI; // Use half a circle (180 degrees) or less for tight
 const angleStep = totalAngle / characters.length;
 
 loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", function (font) {
-  spheres.forEach((sphere, sphereIndex) => {
-    let angleOffset = -totalAngle / 2; // Start from one side of the semi-circle
+  const textHeight = 0.05; // Height of the text
+  const textDistanceFromSphere = 0.6; // Distance above the sphere surface
 
-    characters.forEach((char, charIndex) => {
-      const textGeometry = new THREE.TextGeometry(char, {
-        font: font,
-        size: 0.2,
-        height: 0.05,
-      });
-
-      const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-
-      // Calculate angle for each character
-      const charAngle = angleOffset + charIndex * angleStep;
-
-      // Position each character in a circular path
-      textMesh.position.x = sphere.position.x + Math.cos(charAngle) * orbitRadius;
-      textMesh.position.y = sphere.position.y + Math.sin(charAngle) * orbitRadius;
-      textMesh.position.z = sphere.position.z;
-
-      // Rotate text to always face the camera
-      textMesh.lookAt(camera.position);
-
-      // Store initial angle, sphere index, and reference to the sphere for animation
-      textMesh.userData = { angle: charAngle, sphereIndex: sphereIndex, sphere: sphere };
-
-      scene.add(textMesh);
+  spheres.forEach((sphere, index) => {
+    const textGeometry = new THREE.TextGeometry("Text " + (index + 1), {
+      // Replace with your text
+      font: font,
+      size: 0.2,
+      height: textHeight,
     });
+
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0x222222 });
+    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+    // Position the text above the sphere
+    textMesh.position.y = sphere.geometry.parameters.radius + textDistanceFromSphere;
+
+    // Rotate the text to face the camera
+    textMesh.lookAt(camera.position);
+
+    // Slightly tilt the text to match the curvature of the sphere
+    textMesh.rotation.x -= Math.PI / 15; // Adjust this value to match the curvature
+
+    // Attach the text mesh to the sphere
+    sphere.add(textMesh);
   });
 });
 
@@ -119,12 +116,21 @@ function easeOutExpo(x) {
 // Ellipse Parameters
 const ellipseXRadius = 0.5; // Radius of ellipse along the x-axis
 const ellipseYRadius = 0.25; // Radius of ellipse along the y-axis
-const ellipseSpeed = 0.05; // Speed of movement along the ellipse
+const ellipseSpeed = 0.01; // Reduced speed for slower movement
 
 function floatingPhase(sphere, index) {
   let time = frameCount * ellipseSpeed;
-  sphere.position.x = initialPositions[index].x + ellipseXRadius * Math.cos(time);
-  sphere.position.y = initialPositions[index].y + ellipseYRadius * Math.sin(time);
+
+  // Check if the sphere is the first one (red ball)
+  if (index === 0) {
+    // Rotate in the opposite direction for the red ball
+    sphere.position.x = initialPositions[index].x + ellipseXRadius * Math.cos(-time);
+    sphere.position.y = initialPositions[index].y + ellipseYRadius * Math.sin(-time);
+  } else {
+    // Original rotation direction for other spheres
+    sphere.position.x = initialPositions[index].x + ellipseXRadius * Math.cos(time);
+    sphere.position.y = initialPositions[index].y + ellipseYRadius * Math.sin(time);
+  }
 }
 
 function eclipsePhase(sphere, initialPosition) {
@@ -189,39 +195,27 @@ function animate() {
 
   spheres.forEach((sphere, index) => {
     // Handle sphere movement based on phase
-    if (phase === "floating") floatingPhase(sphere, index);
-    else if (phase === "eclipse") eclipsePhase(sphere, initialPositions[index] || { x: 0, y: 0, z: 0 });
-    else if (phase === "scatter") moveToTarget(sphere, targets[index], scatterStartTime, currentTime);
-
-    // Scale spheres on hover
-    if (intersects.length > 0 && intersects[0].object === sphere) {
-      // Scale up the hovered sphere
-      sphere.scale.lerp(new THREE.Vector3(1.2, 1.2, 1.2), 0.1);
-    } else {
-      // Scale down the non-hovered spheres
-      sphere.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
-    }
-  });
-
-  scene.children.forEach((child) => {
-    if (child instanceof THREE.Mesh && child.userData.angle !== undefined) {
-      const sphere = child.userData.sphere;
-
-      // Update position to orbit around the sphere
-      child.userData.angle += 0.01; // Speed of rotation
-      child.position.x = sphere.position.x + Math.cos(child.userData.angle) * orbitRadius;
-      child.position.y = sphere.position.y + Math.sin(child.userData.angle) * orbitRadius;
-      child.position.z = sphere.position.z;
-
-      // Rotate text to always face the camera
-      child.lookAt(camera.position);
-
-      // Update visibility based on sphere's visibility
-      child.visible = sphere.visible;
+    if (phase === "floating") {
+      floatingPhase(sphere, index);
+      setSphereTextVisibility(sphere, false); // Hide text during floating
+    } else if (phase === "eclipse") {
+      eclipsePhase(sphere, initialPositions[index] || { x: 0, y: 0, z: 0 });
+      setSphereTextVisibility(sphere, false); // Hide text during eclipse
+    } else if (phase === "scatter") {
+      moveToTarget(sphere, targets[index], scatterStartTime, currentTime);
+      setSphereTextVisibility(sphere, true); // Show text during scatter
     }
   });
 
   renderer.render(scene, camera);
+}
+
+function setSphereTextVisibility(sphere, isVisible) {
+  sphere.children.forEach((child) => {
+    if (child instanceof THREE.Mesh && child.geometry instanceof THREE.TextGeometry) {
+      child.visible = isVisible;
+    }
+  });
 }
 
 animate();
