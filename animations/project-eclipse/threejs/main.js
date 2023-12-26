@@ -28,7 +28,7 @@ const loader = new THREE.FontLoader();
 loader.load("./font.json", addTextToSpheres);
 
 // Sphere Creation
-const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+const sphereGeometry = new THREE.SphereGeometry(0.3, 32, 32);
 const sphereMaterials = [
   new THREE.MeshStandardMaterial({ color: 0xff0000 }), // red
   new THREE.MeshStandardMaterial({ color: 0x00ff00 }), // green
@@ -137,9 +137,9 @@ function onMouseMove(event) {
 }
 
 function addTextToSpheres(font) {
-  const textHeight = 0.05; // Height of the text
-  const textDistanceFromSphere = 0.4; // Distance above the sphere surface
-  const labels = ["About", "Contacts", "Works", "Prices", "Advertisement", "Products"];
+  const textHeight = 0.03; // Height of the text
+  const textDistanceFromSphere = 0.35; // Distance above the sphere surface
+  const labels = ["Analisi Dati", "Sviluppo", "Marketing", "Progetti", "Ricerche", "Contatti"];
 
   spheres.forEach((sphere, index) => {
     // Ensure there is a label for each sphere
