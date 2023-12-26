@@ -32,20 +32,33 @@ const angleStep = totalAngle / characters.length;
 
 loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", function (font) {
   const textHeight = 0.05; // Height of the text
-  const textDistanceFromSphere = 0.6; // Distance above the sphere surface
+  const textDistanceFromSphere = 0.4; // Distance above the sphere surface
+
+  // Define the labels array outside the loop
+  const labels = ["About", "Contacts", "Works", "Prices", "Advertisement", "Products"];
 
   spheres.forEach((sphere, index) => {
-    const textGeometry = new THREE.TextGeometry("Text " + (index + 1), {
-      // Replace with your text
+    // Ensure there is a label for each sphere
+    const label = labels[index] ? labels[index] : "Label " + (index + 1);
+
+    const textGeometry = new THREE.TextGeometry(label, {
+      // Use the label for the text
       font: font,
       size: 0.2,
       height: textHeight,
     });
 
-    const textMaterial = new THREE.MeshBasicMaterial({ color: 0x222222 });
+    // Calculate the bounding box of the text geometry
+    textGeometry.computeBoundingBox();
+    const textWidth = textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
+
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const textMesh = new THREE.Mesh(textGeometry, textMaterial);
 
-    // Position the text above the sphere
+    // Center the text horizontally
+    textMesh.position.x = -textWidth / 2; // This will center the text on the x-axis
+
+    // Position the text above the sphere and closer than before
     textMesh.position.y = sphere.geometry.parameters.radius + textDistanceFromSphere;
 
     // Rotate the text to face the camera
