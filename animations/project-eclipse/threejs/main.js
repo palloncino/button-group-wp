@@ -8,6 +8,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0xffffff, 1);
 document.body.appendChild(renderer.domElement);
 
+let currentBgColor = new THREE.Color(0xffffff); // Starting color: white
+
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
@@ -134,7 +136,7 @@ function floatingPhase(sphere, index) {
 }
 
 function eclipsePhase(sphere, initialPosition) {
-  animationTime += 0.002; // Slower increment
+  animationTime += 0.001; // Slower increment
   if (animationTime > 1) animationTime = 1;
 
   let progress = easeOutExpo(animationTime);
@@ -201,6 +203,9 @@ function animate() {
     } else if (phase === "eclipse") {
       eclipsePhase(sphere, initialPositions[index] || { x: 0, y: 0, z: 0 });
       setSphereTextVisibility(sphere, false); // Hide text during eclipse
+      let progress = Math.min(animationTime / movementDuration, 1); // Ensure progress is between 0 and 1
+      currentBgColor.lerp(new THREE.Color(0x000000), progress); // Interpolate towards black
+      renderer.setClearColor(currentBgColor);
     } else if (phase === "scatter") {
       moveToTarget(sphere, targets[index], scatterStartTime, currentTime);
       setSphereTextVisibility(sphere, true); // Show text during scatter
