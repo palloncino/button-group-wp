@@ -191,7 +191,7 @@ function animate() {
   raycaster.setFromCamera(mouse, camera);
 
   // Calculate objects intersecting the picking ray
-  const intersects = raycaster.intersectObjects(spheres);
+  const intersects = phase === "scatter" ? raycaster.intersectObjects(spheres) : [];
 
   spheres.forEach((sphere, index) => {
     // Handle sphere movement based on phase
@@ -204,6 +204,17 @@ function animate() {
     } else if (phase === "scatter") {
       moveToTarget(sphere, targets[index], scatterStartTime, currentTime);
       setSphereTextVisibility(sphere, true); // Show text during scatter
+    }
+
+    // Scale spheres on hover only in the scatter phase
+    if (phase === "scatter") {
+      if (intersects.length > 0 && intersects[0].object === sphere) {
+        // Scale up the hovered sphere
+        sphere.scale.lerp(new THREE.Vector3(1.2, 1.2, 1.2), 0.1);
+      } else {
+        // Scale down the non-hovered spheres
+        sphere.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+      }
     }
   });
 
