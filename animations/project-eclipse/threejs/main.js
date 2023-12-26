@@ -25,7 +25,7 @@ window.addEventListener("mousemove", onMouseMove, false);
 
 // Text Loading
 const loader = new THREE.FontLoader();
-loader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", addTextToSpheres);
+loader.load("./font.json", addTextToSpheres);
 
 // Sphere Creation
 const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
