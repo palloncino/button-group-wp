@@ -148,7 +148,7 @@ function addTextToSpheres(font) {
     const textGeometry = new THREE.TextGeometry(label, {
       // Use the label for the text
       font: font,
-      size: 0.2,
+      size: 0.15,
       height: textHeight,
     });
 
@@ -230,6 +230,14 @@ function animate() {
         sphere.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
       }
     }
+  });
+
+  spheres.forEach((sphere) => {
+    sphere.children.forEach((child) => {
+      if (child instanceof THREE.Mesh && child.geometry instanceof THREE.TextGeometry) {
+        child.lookAt(camera.position);
+      }
+    });
   });
 
   renderer.render(scene, camera);
