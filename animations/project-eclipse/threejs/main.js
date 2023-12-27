@@ -96,12 +96,16 @@ function floatingPhase(sphere, index) {
 
 // Eclipse Phase Logic
 function eclipsePhase(sphere, initialPosition) {
-  animationTime += 0.001; // Slower increment
+  animationTime += 0.001; // Adjust this value to control the speed of the eclipse
   if (animationTime > 1) animationTime = 1;
 
   let progress = easeOutExpo(animationTime);
   sphere.position.x = THREE.MathUtils.lerp(initialPosition.x, 0, progress);
   sphere.position.y = THREE.MathUtils.lerp(initialPosition.y, 0, progress);
+
+  // Interpolate background color based on progress
+  currentBgColor.lerpColors(new THREE.Color(0xffffff), new THREE.Color(0x000000), progress);
+  renderer.setClearColor(currentBgColor);
 }
 
 // Target positions for each sphere
