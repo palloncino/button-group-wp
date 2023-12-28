@@ -29,14 +29,9 @@ loader.load("./font.json", addTextToSpheres);
 
 // Sphere Creation
 const sphereGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-const sphereMaterials = [
-  new THREE.MeshStandardMaterial({ color: 0xff0000 }), // red
-  new THREE.MeshStandardMaterial({ color: 0x00ff00 }), // green
-  new THREE.MeshStandardMaterial({ color: 0x0000ff }), // blue
-  new THREE.MeshStandardMaterial({ color: 0xffff00 }), // yellow
-  new THREE.MeshStandardMaterial({ color: 0x00ffff }), // aqua
-  new THREE.MeshStandardMaterial({ color: 0xff00ff }), // pink
-];
+const SPHERES_COLORS = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0x00ffff, 0xff00ff];
+const sphereMaterials = SPHERES_COLORS.map(color => new THREE.MeshStandardMaterial({ color }));
+
 const spheres = sphereMaterials.map((material) => new THREE.Mesh(sphereGeometry, material));
 spheres.forEach((sphere, index) => {
   sphere.visible = index < 2; // Only the first two spheres are initially visible
@@ -63,6 +58,13 @@ const frameRate = 60; // frames per second
 let animationTime = 0;
 let phase = "floating"; // "floating", "eclipse", "scatter"
 let scatterStartTime;
+let whiteningPhase = false; // New phase for whitening effect
+let colorChangeTime = 0; // Time tracker for the whitening phase
+
+// Ellipse Parameters
+const ellipseXRadius = 0.5; // Radius of ellipse along the x-axis
+const ellipseYRadius = 0.25; // Radius of ellipse along the y-axis
+const ellipseSpeed = 0.01; // Reduced speed for slower movement
 
 // Easing Functions
 function easeOutCubic(x) {
@@ -72,11 +74,6 @@ function easeOutCubic(x) {
 function easeOutExpo(x) {
   return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
 }
-
-// Ellipse Parameters
-const ellipseXRadius = 0.5; // Radius of ellipse along the x-axis
-const ellipseYRadius = 0.25; // Radius of ellipse along the y-axis
-const ellipseSpeed = 0.01; // Reduced speed for slower movement
 
 // Floating Phase Logic
 function floatingPhase(sphere, index) {
@@ -95,17 +92,32 @@ function floatingPhase(sphere, index) {
 }
 
 // Eclipse Phase Logic
-function eclipsePhase(sphere, initialPosition) {
-  animationTime += 0.001; // Adjust this value to control the speed of the eclipse
-  if (animationTime > 1) animationTime = 1;
+function eclipsePhase(sphere, initialPosition, index) {
+  animationTime += 0.001; // Control the speed of the eclipse
+  if (animationTime > 1) {
+    animationTime = 1;
+    if (index === 0) {
+      // Trigger the whitening phase when the eclipse is complete
+      whiteningPhase = true;
+    }
+  }
 
   let progress = easeOutExpo(animationTime);
   sphere.position.x = THREE.MathUtils.lerp(initialPosition.x, 0, progress);
   sphere.position.y = THREE.MathUtils.lerp(initialPosition.y, 0, progress);
 
-  // Interpolate background color based on progress
-  currentBgColor.lerpColors(new THREE.Color(0xffffff), new THREE.Color(0x000000), progress);
-  renderer.setClearColor(currentBgColor);
+  // Change color to black gradually
+  if (progress < 1) {
+    let colorProgress = progress;
+    sphere.material.color.lerp(new THREE.Color(0x333333), colorProgress);
+  }
+
+  if (index === 0 && progress >= 0.95) {
+    // Start enlarging the red sphere
+    sphere.position.z = -1 * easeOutExpo(progress - 0.95); // Move it back along z-axis
+    let scaleFactor = 1 + easeOutExpo(progress - 0.95) * 0.5; // Scale up, adjust 0.5 to control max size
+    sphere.scale.set(scaleFactor, scaleFactor, scaleFactor);
+  }
 }
 
 // Target positions for each sphere
@@ -192,7 +204,10 @@ function onPhaseChange() {
   } else if (phase === "eclipse") {
     phase = "scatter";
     scatterStartTime = Date.now();
-    spheres.forEach((sphere) => (sphere.visible = true));
+    spheres.forEach((sphere, index) => {
+      sphere.visible = true;
+      sphere.material.color.set(SPHERES_COLORS[index]);
+    });
   }
 }
 
@@ -214,7 +229,7 @@ function animate() {
       floatingPhase(sphere, index);
       setSphereTextVisibility(sphere, false); // Hide text during floating
     } else if (phase === "eclipse") {
-      eclipsePhase(sphere, initialPositions[index] || { x: 0, y: 0, z: 0 });
+      eclipsePhase(sphere, initialPositions[index] || { x: 0, y: 0, z: 0 }, index);
       setSphereTextVisibility(sphere, false); // Hide text during eclipse
       let progress = Math.min(animationTime / movementDuration, 1); // Ensure progress is between 0 and 1
       currentBgColor.lerp(new THREE.Color(0x000000), progress); // Interpolate towards black
@@ -243,6 +258,18 @@ function animate() {
       }
     });
   });
+
+  if (whiteningPhase) {
+    // Increment whitening timer
+    colorChangeTime += 0.001;
+    if (colorChangeTime > 3) colorChangeTime = 3; // Cap at 3 seconds
+
+    let colorChangeProgress = easeOutExpo(colorChangeTime / 3);
+    spheres[0].material.color.lerp(new THREE.Color(0xffffff), colorChangeProgress);
+
+    // Add light emission effect
+    // This could involve adding a PointLight to the sphere or changing its emissive properties
+  }
 
   renderer.render(scene, camera);
 }
