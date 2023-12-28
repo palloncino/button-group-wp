@@ -30,7 +30,7 @@ loader.load("./font.json", addTextToSpheres);
 // Sphere Creation
 const sphereGeometry = new THREE.SphereGeometry(0.3, 32, 32);
 const SPHERES_COLORS = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0x00ffff, 0xff00ff];
-const sphereMaterials = SPHERES_COLORS.map(color => new THREE.MeshStandardMaterial({ color }));
+const sphereMaterials = SPHERES_COLORS.map((color) => new THREE.MeshStandardMaterial({ color }));
 
 const spheres = sphereMaterials.map((material) => new THREE.Mesh(sphereGeometry, material));
 spheres.forEach((sphere, index) => {
@@ -229,11 +229,15 @@ function animate() {
       floatingPhase(sphere, index);
       setSphereTextVisibility(sphere, false); // Hide text during floating
     } else if (phase === "eclipse") {
+      animationTime += 0.001; // Control the speed of the eclipse
+      if (animationTime > 1) {
+        animationTime = 1;
+      }
+      let progress = easeOutExpo(animationTime);
       eclipsePhase(sphere, initialPositions[index] || { x: 0, y: 0, z: 0 }, index);
       setSphereTextVisibility(sphere, false); // Hide text during eclipse
-      let progress = Math.min(animationTime / movementDuration, 1); // Ensure progress is between 0 and 1
-      currentBgColor.lerp(new THREE.Color(0x000000), progress); // Interpolate towards black
-      renderer.setClearColor(currentBgColor);
+      let colorProgress = new THREE.Color(0xffffff).lerp(new THREE.Color(0x000000), animationTime);
+      renderer.setClearColor(colorProgress);
     } else if (phase === "scatter") {
       moveToTarget(sphere, targets[index], scatterStartTime, currentTime);
       setSphereTextVisibility(sphere, true); // Show text during scatter
