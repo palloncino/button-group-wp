@@ -1,3 +1,5 @@
 - create posts instead of hardcoding table s rows
 - upgrade page content design (full width)
 - amministrazione transparente (all buttons layers)
+- if you re in one page of the menu button, the menu button will highlight (current route)
+- Add NEWs page, take that piece of column in awhole page (create buttons news)
