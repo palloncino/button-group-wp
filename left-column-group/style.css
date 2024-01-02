@@ -5,12 +5,12 @@
   box-sizing: border-box;
   background: #fff;
   border-radius: .4rem;
-  padding: .4rem .6rem; 
+  padding: .4rem; 
   display: flex;
   justify-content: flex-start;
   align-items: center;
   border: 2px solid #e9e9e9;
-  height: 80px;
+  height: 100%;
   cursor: pointer;
 }
 .selected-button .side-button-inner {
@@ -44,6 +44,7 @@
   height: 100%;
   flex: 1;
   display: flex;
+  min-width: 72px;
   justify-content: center;
   align-items: center;
   transition-delay: .1s;
