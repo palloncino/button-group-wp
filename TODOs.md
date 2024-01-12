@@ -1,1 +1,5 @@
 - create posts instead of hardcoding table s rows (currently using js objects)
+- do we have better images?
+- postit is to be copied over from home page to all other primary pages
+- News page needs to be designed
+- Contatore degli accessi (Ultimo Link Amministrazione Trasparente)
