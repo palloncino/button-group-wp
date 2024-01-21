@@ -6,45 +6,26 @@
     <link rel="stylesheet" href="style.css" />
     <title>Document</title>
   </head>
-
-  <style>
-    body {
-      background: #e4e4e4;
-      background-attachment: fixed;
-      background-size: cover;
-    }
-
-    * {
-      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-        Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
-    }
-    .wrapper {
-      box-sizing: border-box;
-      width: 263px;
-      height: 100%;
-      margin: 0 auto;
-    }
-  </style>
   <body>
-    <!-- remove when posting it on HTML snippet (wrapper) -->
-    <div class="wrapper">
-      <div class="postit-vacancies-container">
-        <div class="postit-vacancies-header">
-          <div class="postit-vacancies-header-title">Posti letto Liberi</div>
-          <div class="postit-vacancies-header-subtitle">
-            La nostra struttura presenta i seguenti posti liberi:
-          </div>
-        </div>
+    <div class="postit-vacancies-container">
+      <div class="postit-vacancies-header">
+        <div class="postit-vacancies-header-title">Posti letto Liberi</div>
+        <div class="postit-vacancies-header-subtitle">La nostra struttura presenta i seguenti posti liberi:</div>
+      </div>
 
-        <div class="postit-vacancies-central">
-          <div class="postit-vacancies-central-value">4</div>
+      <div class="postit-vacancies-central">
+        <div class="postit-vacancies-central-value" id="postit-vacancies-central-value">
+          <img
+            src="http://apsproncegno.chebellagiornata.it/wp-content/uploads/2024/01/Iphone-spinner-1.gif"
+            alt="spinner"
+          />
         </div>
+      </div>
 
-        <div class="postit-vacancies-footer">
-          <button class="postit-vacancies-footer-button" onclick="">
-            Domanda di Accoglimento
-          </button>
-        </div>
+      <div class="postit-vacancies-footer">
+        <button 
+          class="postit-vacancies-footer-button" 
+          onclick="window.location.href='https://apsproncegno.chebellagiornata.it/modulistica/';">Domanda di Accoglimento</button>
       </div>
     </div>
   </body>
