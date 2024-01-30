@@ -315,12 +315,12 @@ background: #fff;
 transition: .2s;
 }
 
-.side-button-outer:hover .side-button-icon {
+/* .side-button-outer:hover .side-button-icon {
 flex: 1;
 opacity: 1;
 width: 100%;
 height: 100%;
-}
+} */
 
 .side-button-outer:hover .side-button-text-text-container {
 transition: .2s;

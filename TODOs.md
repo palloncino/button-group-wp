@@ -1,6 +1,6 @@
 + TODO
 - Create child theme
-- All PDFs should be hosted to https://apsproncegno.chebellagiornata.it/
+- [In Progress] All PDFs should be hosted to https://apsproncegno.chebellagiornata.it/
 
 + NICE TO HAVE / EXTRA
 - Better images
